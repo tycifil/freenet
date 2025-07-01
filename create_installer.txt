@@ -1,1 +1,1 @@
-pyinstaller --onefile --noconsole --icon=encoder.ico freenet.pyw
+pyinstaller --onefile --noconsole --icon=icon.ico freenet.pyw
