@@ -25,25 +25,25 @@ if sys.platform == 'win32':
 
 
 def kill_xray_processes():
-        """Kill any existing Xray processes"""
-        try:
-            if sys.platform == 'win32':
-                # Windows implementation
-                import psutil
-                for proc in psutil.process_iter(['name']):
-                    try:
-                        if proc.info['name'] == 'xray.exe':
-                            proc.kill()
-                    except (psutil.NoSuchProcess, psutil.AccessDenied):
-                        pass
-            else:
-                # Linux/macOS implementation
-                import signal
-                import subprocess
-                subprocess.run(['pkill', '-f', 'xray'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        except Exception as e:
-            #self.log(f"Error killing existing Xray processes: {str(e)}")
-            pass
+    """Kill any existing Xray processes"""
+    try:
+        if sys.platform == 'win32':
+            # Windows implementation
+            import psutil
+            for proc in psutil.process_iter(['name']):
+                try:
+                    if proc.info['name'] == 'xray.exe':
+                        proc.kill()
+                except (psutil.NoSuchProcess, psutil.AccessDenied):
+                    pass
+        else:
+            # Linux/macOS implementation
+            import signal
+            import subprocess
+            subprocess.run(['pkill', '-f', 'xray'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except Exception as e:
+        #self.log(f"Error killing existing Xray processes: {str(e)}")
+        pass
 
 
 class VPNConfigGUI:
