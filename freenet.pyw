@@ -366,7 +366,7 @@ class VPNConfigGUI:
         self.mirror_combo.pack(pady=5, padx=20, fill=tk.X)
         
         # Thread count selection
-        ttk.Label(self.mirror_window, text="Select thread count:").pack(pady=(10, 0))
+        ttk.Label(self.mirror_window, text="Maximum cpu usage:").pack(pady=(10, 0))
         
         self.thread_combo = ttk.Combobox(
             self.mirror_window,
