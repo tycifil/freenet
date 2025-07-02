@@ -25,25 +25,25 @@ if sys.platform == 'win32':
 
 
 def kill_xray_processes():
-    """Kill any existing Xray processes"""
-    try:
-        if sys.platform == 'win32':
-            # Windows implementation
-            import psutil
-            for proc in psutil.process_iter(['name']):
-                try:
-                    if proc.info['name'] == 'xray.exe':
-                        proc.kill()
-                except (psutil.NoSuchProcess, psutil.AccessDenied):
-                    pass
-        else:
-            # Linux/macOS implementation
-            import signal
-            import subprocess
-            subprocess.run(['pkill', '-f', 'xray'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    except Exception as e:
-        #self.log(f"Error killing existing Xray processes: {str(e)}")
-        pass
+        """Kill any existing Xray processes"""
+        try:
+            if sys.platform == 'win32':
+                # Windows implementation
+                import psutil
+                for proc in psutil.process_iter(['name']):
+                    try:
+                        if proc.info['name'] == 'xray.exe':
+                            proc.kill()
+                    except (psutil.NoSuchProcess, psutil.AccessDenied):
+                        pass
+            else:
+                # Linux/macOS implementation
+                import signal
+                import subprocess
+                subprocess.run(['pkill', '-f', 'xray'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except Exception as e:
+            #self.log(f"Error killing existing Xray processes: {str(e)}")
+            pass
 
 
 class VPNConfigGUI:
@@ -215,14 +215,14 @@ class VPNConfigGUI:
 
         for col in columns:
             self.tree.heading(col, text=col)
-            self.tree.column(col, anchor='center')
+            self.tree.column(col, anchor='center', minwidth=50)  # Added minwidth parameter
 
-        self.tree.column('Index', width=50)
-        self.tree.column('Latency', width=100)
-        self.tree.column('Protocol', width=80)
-        self.tree.column('Server', width=150)
-        self.tree.column('Port', width=80)
-        self.tree.column('Config', width=400, anchor='w')
+        self.tree.column('Index', width=50, minwidth=50)
+        self.tree.column('Latency', width=100, minwidth=80)
+        self.tree.column('Protocol', width=80, minwidth=80)
+        self.tree.column('Server', width=150, minwidth=150)
+        self.tree.column('Port', width=80, minwidth=80)
+        self.tree.column('Config', width=400, anchor='w', minwidth=150)
 
         tree_vscrollbar = ttk.Scrollbar(self.middle_frame, orient=tk.VERTICAL, command=self.tree.yview)
         self.tree.configure(yscrollcommand=tree_vscrollbar.set)
