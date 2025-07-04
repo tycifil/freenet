@@ -218,7 +218,7 @@ class VPNConfigGUI:
             self.tree.column(col, anchor='center', minwidth=50)  # Added minwidth parameter
 
         self.tree.column('Index', width=50, minwidth=50)
-        self.tree.column('Latency', width=100, minwidth=80)
+        self.tree.column('Latency', width=100, minwidth=100)
         self.tree.column('Protocol', width=80, minwidth=80)
         self.tree.column('Server', width=150, minwidth=150)
         self.tree.column('Port', width=80, minwidth=80)
@@ -832,7 +832,28 @@ class VPNConfigGUI:
                 parsed = urllib.parse.urlparse(config_uri)
                 return "vless", parsed.hostname or "unknown", parsed.port or "unknown"
             elif config_uri.startswith("ss://"):
-                return "shadowsocks", "unknown", "unknown"
+                # Handle Shadowsocks configs
+                parts = config_uri[5:].split("#", 1)
+                encoded_part = parts[0]
+                
+                if "@" in encoded_part:
+                    # New style SS URI: ss://method:password@server:port
+                    userinfo, server_part = encoded_part.split("@", 1)
+                    server, port = server_part.split(":", 1) if ":" in server_part else (server_part, "unknown")
+                else:
+                    # Old style SS URI: ss://base64(method:password)@server:port
+                    try:
+                        decoded = base64.b64decode(encoded_part + '=' * (-len(encoded_part) % 4)).decode('utf-8')
+                        if "@" in decoded:
+                            userinfo, server_part = decoded.split("@", 1)
+                            server, port = server_part.split(":", 1) if ":" in server_part else (server_part, "unknown")
+                        else:
+                            # Just method:password without server
+                            server, port = "unknown", "unknown"
+                    except:
+                        server, port = "unknown", "unknown"
+                
+                return "shadowsocks", server, port
             elif config_uri.startswith("trojan://"):
                 parsed = urllib.parse.urlparse(config_uri)
                 return "trojan", parsed.hostname or "unknown", parsed.port or "unknown"
@@ -1578,7 +1599,7 @@ class VPNConfigGUI:
                 response = requests.get(
                     self.PING_TEST_URL,
                     proxies=proxies,
-                    timeout=4,
+                    timeout=10,
                     headers={
                         'Cache-Control': 'no-cache',
                         'Connection': 'close'
